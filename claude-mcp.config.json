@@ -1,0 +1,4 @@
+{
+    "additional_args": ["--permission-mode", "bypassPermissions", "--model", "opus"],
+    "timeout_secs": 3600
+}
