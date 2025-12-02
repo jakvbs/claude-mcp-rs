@@ -396,12 +396,10 @@ async fn run_internal(opts: Options) -> Result<ClaudeResult> {
                 };
 
                 // Collect all messages with bounds checking
-                if let Ok(map) =
-                    serde_json::from_value::<HashMap<String, Value>>(line_data.clone())
+                if let Ok(map) = serde_json::from_value::<HashMap<String, Value>>(line_data.clone())
                 {
                     // Estimate size of this message (JSON serialized size)
-                    let message_size =
-                        serde_json::to_string(&map).map(|s| s.len()).unwrap_or(0);
+                    let message_size = serde_json::to_string(&map).map(|s| s.len()).unwrap_or(0);
 
                     // Check if adding this message would exceed byte limit
                     if all_messages_size + message_size <= MAX_ALL_MESSAGES_SIZE {
@@ -467,8 +465,7 @@ async fn run_internal(opts: Options) -> Result<ClaudeResult> {
                             if let Some(result_text) =
                                 line_data.get("result").and_then(|v| v.as_str())
                             {
-                                let new_size =
-                                    result.agent_messages.len() + result_text.len();
+                                let new_size = result.agent_messages.len() + result_text.len();
                                 if new_size > MAX_AGENT_MESSAGES_SIZE {
                                     if !result.agent_messages_truncated {
                                         result.agent_messages.push_str(
@@ -477,8 +474,7 @@ async fn run_internal(opts: Options) -> Result<ClaudeResult> {
                                         result.agent_messages_truncated = true;
                                     }
                                 } else if !result.agent_messages_truncated {
-                                    if !result.agent_messages.is_empty()
-                                        && !result_text.is_empty()
+                                    if !result.agent_messages.is_empty() && !result_text.is_empty()
                                     {
                                         result.agent_messages.push('\n');
                                     }
