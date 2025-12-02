@@ -1,6 +1,6 @@
-# Contributing to codex-mcp-rs
+# Contributing to claude-mcp-rs
 
-Thank you for your interest in contributing to codex-mcp-rs!
+Thank you for your interest in contributing to claude-mcp-rs!
 
 ## Development Setup
 
@@ -11,8 +11,8 @@ Thank you for your interest in contributing to codex-mcp-rs!
 
 2. Clone the repository:
    ```bash
-   git clone https://github.com/missdeer/codex-mcp-rs.git
-   cd codex-mcp-rs
+   git clone https://github.com/jakvbs/claude-mcp-rs.git
+   cd claude-mcp-rs
    ```
 
 3. Build the project:
@@ -38,7 +38,7 @@ Before submitting a PR:
 1. Ensure all tests pass: `cargo test`
 2. Check formatting: `cargo fmt -- --check`
 3. Run clippy: `cargo clippy -- -D warnings`
-4. Test the binary manually with a real Codex CLI installation
+4. Test the binary manually with a real Claude CLI installation
 
 ## Pull Request Process
 
@@ -64,8 +64,6 @@ Releases are automated via GitHub Actions when a tag is pushed:
 The CI will automatically:
 - Build binaries for all platforms
 - Create a GitHub release
-- Publish to npm
-- Register with MCP registry
 
 ## Architecture
 
@@ -73,4 +71,4 @@ See [CLAUDE.md](./CLAUDE.md) for detailed architecture documentation.
 
 ## Questions?
 
-Open an issue on GitHub or contact missdeer
+Open an issue on GitHub.

@@ -1,11 +1,11 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
-  "name": "io.github.missdeer/claude-mcp-rs",
+  "name": "io.github.jakvbs/claude-mcp-rs",
   "version": "0.1.0",
   "description": "Rust MCP server wrapping Claude CLI for stdio-based tool calls. High-performance implementation with async I/O.",
   "packages": [
     {
-      "identifier": "@missdeer/claude-mcp-rs",
+      "identifier": "@jakvbs/claude-mcp-rs",
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "transport": {
@@ -16,6 +16,6 @@
   ],
   "repository": {
     "source": "github",
-    "url": "https://github.com/missdeer/claude-mcp-rs"
+    "url": "https://github.com/jakvbs/claude-mcp-rs"
   }
 }

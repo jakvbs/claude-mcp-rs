@@ -6,7 +6,7 @@ const unzipper = require('unzipper');
 
 const packageJson = require('./package.json');
 const version = packageJson.version;
-const REPO = 'missdeer/claude-mcp-rs';
+const REPO = 'jakvbs/claude-mcp-rs';
 
 const platformMap = {
   'darwin': 'Darwin',

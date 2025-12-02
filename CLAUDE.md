@@ -6,10 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is **claude-mcp-rs**, a Rust implementation of an MCP (Model Context Protocol) server that wraps the Claude CLI. It enables Claude Code to invoke the local Claude CLI for AI-assisted coding tasks through the MCP protocol.
 
-Related implementations in this workspace:
-- `codexmcp/` - Python implementation with session persistence and parallel execution
-- `codex-mcp-go/` - Go implementation
-- `geminimcp/` - Python MCP server for Gemini CLI
+Related projects:
+- [codex-mcp-rs](https://github.com/jakvbs/codex-mcp-rs) - Rust MCP server for Codex CLI
+- [gemini-mcp-rs](https://github.com/jakvbs/gemini-mcp-rs) - Rust MCP server for Gemini CLI
 
 ## Build and Development Commands
 

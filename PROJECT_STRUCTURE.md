@@ -101,6 +101,6 @@ When a `v*` tag is pushed:
 4. **MCP registry**: Registers server for discovery in Claude Code
 
 Users can then install via:
-- `npm install -g @missdeer/claude-mcp-rs`
+- `npm install -g @jakvbs/claude-mcp-rs`
 - Direct binary download from GitHub releases
 - Building from source with `cargo build --release`

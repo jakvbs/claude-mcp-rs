@@ -224,13 +224,13 @@ Before releasing:
 **Rust Version**: 1.70+
 **MCP Protocol**: 2024-11-05
 **License**: MIT
-**Contact**: missdeer
+**Contact**: jakvbs
 
 ## Links
 
-- Repository: https://github.com/missdeer/claude-mcp-rs
-- Issues: https://github.com/missdeer/claude-mcp-rs/issues
-- NPM: https://www.npmjs.com/package/@missdeer/claude-mcp-rs
+- Repository: https://github.com/jakvbs/claude-mcp-rs
+- Issues: https://github.com/jakvbs/claude-mcp-rs/issues
+- NPM: https://www.npmjs.com/package/@jakvbs/claude-mcp-rs
 - MCP Registry: https://modelcontextprotocol.io/
 
 ---

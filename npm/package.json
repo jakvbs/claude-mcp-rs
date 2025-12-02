@@ -1,7 +1,7 @@
 {
-  "name": "@missdeer/claude-mcp-rs",
+  "name": "@jakvbs/claude-mcp-rs",
   "version": "0.1.0",
-  "mcpName": "io.github.missdeer/claude-mcp-rs",
+  "mcpName": "io.github.jakvbs/claude-mcp-rs",
   "description": "NPM wrapper for claude-mcp-rs - Rust implementation of Claude MCP server",
   "bin": {
     "claude-mcp-rs": "bin.js"
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/missdeer/claude-mcp-rs.git"
+    "url": "git+https://github.com/jakvbs/claude-mcp-rs.git"
   },
-  "author": "missdeer",
+  "author": "jakvbs",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/missdeer/claude-mcp-rs/issues"
+    "url": "https://github.com/jakvbs/claude-mcp-rs/issues"
   },
-  "homepage": "https://github.com/missdeer/claude-mcp-rs#readme",
+  "homepage": "https://github.com/jakvbs/claude-mcp-rs#readme",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"

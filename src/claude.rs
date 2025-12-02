@@ -153,7 +153,7 @@ enum ValidationMode {
 /// After hitting max_len, continues reading until newline to properly consume the full line.
 /// This ensures the next read starts at the correct position. For subprocess stdout (our use case),
 /// this is appropriate because:
-/// 1. The Codex CLI always outputs newline-terminated JSON
+/// 1. The Claude CLI always outputs newline-terminated JSON
 /// 2. Process-level timeout prevents indefinite blocking
 /// 3. We stop allocating memory once max_len is hit, preventing OOM
 async fn read_line_with_limit<R: AsyncBufReadExt + Unpin>(
