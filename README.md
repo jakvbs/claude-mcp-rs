@@ -79,7 +79,7 @@ The server provides a single `claude` tool with a minimal parameter surface. Mos
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `SESSION_ID` | string | Resume a previously started Claude CLI session. Use the exact `SESSION_ID` value returned from an earlier call. If omitted, a new session is created. |
+| `SESSION_ID` | string | Resume a previously started Claude CLI session. Use the exact `SESSION_ID` value returned from an earlier call. If omitted, a new session is created. Do not send an empty string value: when starting a new session, omit the `SESSION_ID` field entirely instead of passing `\"\"`. |
 
 ### Response Structure
 

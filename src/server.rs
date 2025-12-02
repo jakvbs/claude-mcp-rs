@@ -17,7 +17,8 @@ pub struct ClaudeArgs {
     /// Resume a previously started Claude CLI session. Must be the exact
     /// `SESSION_ID` string returned by an earlier `claude` tool call (typically
     /// a UUID). If omitted, a new session is created. Do not pass custom labels
-    /// here.
+    /// here, and never send an empty string value: when starting a new session,
+    /// omit the `SESSION_ID` field entirely instead of passing `""`.
     #[serde(rename = "SESSION_ID", default)]
     pub session_id: Option<String>,
 }
@@ -109,11 +110,15 @@ impl ClaudeServer {
             ));
         }
 
+        // Normalize empty string session_id to None so that clients should
+        // either omit the field or provide a real session id.
+        let session_id = args.session_id.filter(|s| !s.is_empty());
+
         // Create options for Claude CLI client
         let opts = Options {
             prompt: args.prompt,
             working_dir: canonical_working_dir,
-            session_id: args.session_id,
+            session_id,
             additional_args: claude::default_additional_args(),
             timeout_secs: None,
         };

@@ -58,8 +58,9 @@ The server provides a `claude` tool with a minimal parameter surface:
 
 - **PROMPT** (required): Task instruction
 - **SESSION_ID** (optional): Resume a previously started Claude CLI session.
-  Use exactly the `SESSION_ID` value returned from an earlier `claude` tool call;
-  leaving it empty starts a new session.
+  Use exactly the `SESSION_ID` value returned from an earlier `claude` tool call.
+  When starting a new session, omit this field entirely instead of passing an
+  empty string.
 
 Other Claude CLI flags such as `--model`, `--permission-mode`, `--system-prompt`,
 and `--strict-mcp-config` are not MCP tool parameters. Configure them globally
