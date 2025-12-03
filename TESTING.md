@@ -141,7 +141,7 @@ Our CI pipeline runs tests on every push and pull request:
 
 ### Test Matrix
 
-- **Platforms**: Ubuntu, macOS, Windows
+- **Platforms**: Ubuntu, macOS
 - **Rust versions**: stable, beta
 
 ### CI Jobs
@@ -237,18 +237,6 @@ If tests hang, they may be waiting for I/O. Run with timeout:
 
 ```bash
 cargo test --timeout 30
-```
-
-### Tests Fail on Windows
-
-Windows path and escaping issues are common. Use `cfg!(windows)` guards:
-
-```rust
-#[cfg(windows)]
-#[test]
-fn windows_specific_test() {
-    // ...
-}
 ```
 
 ## Contributing Tests
