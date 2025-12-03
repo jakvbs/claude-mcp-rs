@@ -462,25 +462,9 @@ async fn run_internal(opts: Options) -> Result<ClaudeResult> {
                             }
                         }
                         "result" => {
-                            if let Some(result_text) =
-                                line_data.get("result").and_then(|v| v.as_str())
-                            {
-                                let new_size = result.agent_messages.len() + result_text.len();
-                                if new_size > MAX_AGENT_MESSAGES_SIZE {
-                                    if !result.agent_messages_truncated {
-                                        result.agent_messages.push_str(
-                                            "\n[... Agent messages truncated due to size limit ...]",
-                                        );
-                                        result.agent_messages_truncated = true;
-                                    }
-                                } else if !result.agent_messages_truncated {
-                                    if !result.agent_messages.is_empty() && !result_text.is_empty()
-                                    {
-                                        result.agent_messages.push('\n');
-                                    }
-                                    result.agent_messages.push_str(result_text);
-                                }
-                            }
+                            // Note: We don't extract text from "result" events because
+                            // the same content is already captured from "assistant" events.
+                            // We only use "result" events for error handling.
 
                             // If this result represents an error (`is_error: true`),
                             // surface it as a failure.

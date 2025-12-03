@@ -314,3 +314,165 @@ echo {"type":"assistant","message":{"content":[{"type":"text","text":"ok"}]},"se
     env::remove_var("CLAUDE_BIN");
     env::remove_var("CLAUDE_ARGS_LOG");
 }
+
+#[tokio::test]
+async fn test_no_duplicate_messages_from_assistant_and_result_events() {
+    // Test that text from "result" events is NOT duplicated when already captured from "assistant" events.
+    // Claude CLI outputs the same content in both event types, so we should only capture from "assistant".
+    use claude_mcp_rs::claude;
+    use std::env;
+    use tempfile::tempdir;
+
+    let temp_dir = tempdir().expect("Failed to create temp dir");
+    let temp_path = temp_dir.path().to_path_buf();
+
+    #[cfg(not(target_os = "windows"))]
+    {
+        use std::fs;
+        use std::os::unix::fs::PermissionsExt;
+
+        let script_path = temp_path.join("duplicate_test.sh");
+        // Emit both "assistant" and "result" events with the same text
+        let script_contents = r#"#!/bin/sh
+echo '{"type":"assistant","message":{"content":[{"type":"text","text":"Hello from Claude!"}]},"session_id":"dup-test-session"}'
+echo '{"type":"result","result":"Hello from Claude!","is_error":false,"session_id":"dup-test-session"}'
+"#;
+
+        fs::write(&script_path, script_contents).expect("Failed to write script");
+        let mut perms = fs::metadata(&script_path)
+            .expect("Failed to get metadata")
+            .permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&script_path, perms).expect("Failed to set permissions");
+
+        env::set_var("CLAUDE_BIN", script_path.to_str().unwrap());
+    }
+
+    #[cfg(target_os = "windows")]
+    {
+        use std::fs;
+
+        let script_path = temp_path.join("duplicate_test.bat");
+        let script_contents = r#"@echo off
+echo {"type":"assistant","message":{"content":[{"type":"text","text":"Hello from Claude!"}]},"session_id":"dup-test-session"}
+echo {"type":"result","result":"Hello from Claude!","is_error":false,"session_id":"dup-test-session"}
+"#;
+        fs::write(&script_path, script_contents).expect("Failed to write script");
+        env::set_var("CLAUDE_BIN", script_path.to_str().unwrap());
+    }
+
+    let opts = Options {
+        prompt: "test".to_string(),
+        working_dir: temp_path.clone(),
+        session_id: None,
+        additional_args: Vec::new(),
+        timeout_secs: Some(10),
+    };
+
+    let result = claude::run(opts).await.expect("run should return Ok");
+
+    assert!(result.success, "should succeed");
+    assert_eq!(result.session_id, "dup-test-session");
+
+    // The key assertion: text should appear exactly ONCE, not twice
+    let text = result.agent_messages.trim();
+    assert_eq!(
+        text, "Hello from Claude!",
+        "text should appear exactly once, got: '{}'",
+        text
+    );
+
+    // Count occurrences to be extra sure
+    let count = result.agent_messages.matches("Hello from Claude!").count();
+    assert_eq!(
+        count, 1,
+        "text should appear exactly 1 time, but found {} occurrences",
+        count
+    );
+
+    env::remove_var("CLAUDE_BIN");
+}
+
+#[tokio::test]
+async fn test_result_event_error_handling_without_assistant_event() {
+    // Test that "result" events with is_error:true are properly handled for error reporting,
+    // even when there are no preceding "assistant" events.
+    use claude_mcp_rs::claude;
+    use std::env;
+    use tempfile::tempdir;
+
+    let temp_dir = tempdir().expect("Failed to create temp dir");
+    let temp_path = temp_dir.path().to_path_buf();
+
+    #[cfg(not(target_os = "windows"))]
+    {
+        use std::fs;
+        use std::os::unix::fs::PermissionsExt;
+
+        let script_path = temp_path.join("error_result_test.sh");
+        // Emit only a "result" event with is_error:true (no assistant event)
+        let script_contents = r#"#!/bin/sh
+echo '{"type":"result","result":"Something went wrong","is_error":true,"session_id":"error-test-session"}'
+"#;
+
+        fs::write(&script_path, script_contents).expect("Failed to write script");
+        let mut perms = fs::metadata(&script_path)
+            .expect("Failed to get metadata")
+            .permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&script_path, perms).expect("Failed to set permissions");
+
+        env::set_var("CLAUDE_BIN", script_path.to_str().unwrap());
+    }
+
+    #[cfg(target_os = "windows")]
+    {
+        use std::fs;
+
+        let script_path = temp_path.join("error_result_test.bat");
+        let script_contents = r#"@echo off
+echo {"type":"result","result":"Something went wrong","is_error":true,"session_id":"error-test-session"}
+"#;
+        fs::write(&script_path, script_contents).expect("Failed to write script");
+        env::set_var("CLAUDE_BIN", script_path.to_str().unwrap());
+    }
+
+    let opts = Options {
+        prompt: "test".to_string(),
+        working_dir: temp_path.clone(),
+        session_id: None,
+        additional_args: Vec::new(),
+        timeout_secs: Some(10),
+    };
+
+    let result = claude::run(opts).await.expect("run should return Ok");
+
+    // Verify error handling works
+    assert!(!result.success, "should fail due to is_error:true");
+    assert_eq!(result.session_id, "error-test-session");
+
+    assert!(
+        result.error.is_some(),
+        "error should be set from result event"
+    );
+    let error_msg = result.error.unwrap();
+    assert!(
+        error_msg.contains("Claude error:"),
+        "error should be formatted as 'Claude error: ...', got: '{}'",
+        error_msg
+    );
+    assert!(
+        error_msg.contains("Something went wrong"),
+        "error should contain the result text, got: '{}'",
+        error_msg
+    );
+
+    // agent_messages should be empty since we only had a result event (no assistant event)
+    assert!(
+        result.agent_messages.is_empty(),
+        "agent_messages should be empty when only result event is present, got: '{}'",
+        result.agent_messages
+    );
+
+    env::remove_var("CLAUDE_BIN");
+}

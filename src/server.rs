@@ -130,53 +130,24 @@ impl ClaudeServer {
 
         let combined_warnings = result.warnings.clone();
 
-        // Prepare the response
-        if result.success {
-            let output = ClaudeOutput {
-                success: true,
-                session_id: result.session_id,
-                message: result.agent_messages.clone(),
-                agent_messages_truncated: if result.agent_messages_truncated {
-                    Some(true)
-                } else {
-                    None
-                },
-                all_messages: None,
-                all_messages_truncated: None,
-                error: result.error.clone(),
-                warnings: combined_warnings.clone(),
-            };
+        // Prepare the response using TOON format for token efficiency
+        let output = ClaudeOutput {
+            success: result.success,
+            session_id: result.session_id,
+            message: result.agent_messages,
+            agent_messages_truncated: result.agent_messages_truncated.then_some(true),
+            all_messages: None,
+            all_messages_truncated: None,
+            error: result.error,
+            warnings: combined_warnings,
+        };
 
-            let json_output = serde_json::to_string(&output).map_err(|e| {
-                McpError::internal_error(format!("Failed to serialize output: {}", e), None)
-            })?;
+        let toon_output = toon_format::encode_default(&output).map_err(|e| {
+            McpError::internal_error(format!("Failed to serialize output: {}", e), None)
+        })?;
 
-            Ok(CallToolResult::success(vec![Content::text(json_output)]))
-        } else {
-            // On failure, return structured error with warnings separated
-            let output = ClaudeOutput {
-                success: false,
-                session_id: result.session_id,
-                message: result.agent_messages.clone(),
-                agent_messages_truncated: if result.agent_messages_truncated {
-                    Some(true)
-                } else {
-                    None
-                },
-                all_messages: None,
-                all_messages_truncated: None,
-                error: result.error.clone(),
-                warnings: combined_warnings.clone(),
-            };
-
-            let json_output = serde_json::to_string(&output).map_err(|e| {
-                McpError::internal_error(format!("Failed to serialize output: {}", e), None)
-            })?;
-
-            // Return the structured error as content instead of throwing an error
-            // This allows clients to access both error and warnings fields
-            Ok(CallToolResult::success(vec![Content::text(json_output)]))
-        }
+        // Return structured content so callers can inspect success, error, and warning fields
+        Ok(CallToolResult::success(vec![Content::text(toon_output)]))
     }
 }
 
